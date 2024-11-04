@@ -15,11 +15,14 @@ struct ContentView: View {
     
     @State private var path = [Destination]()
     @State private var sortOrder = SortDescriptor(\Destination.name)
+    @State private var searchText = ""
     
     var body: some View {
         NavigationStack(path: $path) {
-            DestinationListingView(sort: sortOrder)
+            DestinationListingView(sort: sortOrder, searchString: searchText)
                 .navigationTitle("iTour")
+                .searchable(text: $searchText)
+                .animation(.default, value: searchText)
                 .navigationDestination(for: Destination.self, destination: EditDestinationView.init)
                 .toolbar {
                     Button("Add Destination", systemImage: "plus", action: addDestination)
@@ -51,3 +54,7 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
+//add swipe to delete for sights
+//use array to init listing view
+//add new picker for future places to visit
