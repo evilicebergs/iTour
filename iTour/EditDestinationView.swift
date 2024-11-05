@@ -31,6 +31,11 @@ struct EditDestinationView: View {
                 ForEach(destination.sights) { sight in
                     Text(sight.name)
                 }
+                .onDelete { indexSet in
+                    for index in indexSet {
+                        destination.sights.remove(at: index)
+                    }
+                }
                 HStack {
                     TextField("Add a new sight in \(destination.name)", text: $newSightName)
                     

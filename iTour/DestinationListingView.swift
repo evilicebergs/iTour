@@ -18,11 +18,19 @@ struct DestinationListingView: View {
         List {
             ForEach(destinations) { destination in
                 NavigationLink(value: destination) {
-                    VStack(alignment: .leading) {
-                        Text(destination.name)
-                            .font(.headline)
-                        
-                        Text(destination.date.formatted(date: .long, time: .shortened))
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(destination.name)
+                                .font(.headline)
+                            
+                            Text(destination.date.formatted(date: .long, time: .shortened))
+                        }
+                        Spacer()
+                        Image(systemName: destination.toVisit ? "star.fill" : "star")
+                            .foregroundStyle(destination.toVisit ? .yellow : .red)
+                            .onTapGesture {
+                                destination.toVisit.toggle()
+                            }
                     }
                 }
             }
@@ -30,14 +38,20 @@ struct DestinationListingView: View {
         }
     }
     
-    init(sort: SortDescriptor<Destination>, searchString: String) {
+    init(sort: SortDescriptor<Destination>, searchString: String, date: Int) {
             _destinations = Query(filter: #Predicate {
                 if searchString.isEmpty {
-                    return true
+                    if date == 0 {
+                        return true
+                    } else if date == 1 {
+                        return $0.toVisit == true
+                    } else {
+                        return $0.toVisit == false
+                    }
                 } else {
                     return $0.name.localizedStandardContains(searchString)
                 }
-            }, sort: [sort])
+            }, sort: [sort, SortDescriptor(\Destination.name)])
     }
     
     func deleteDestinations(_ indexSet: IndexSet) {
@@ -49,5 +63,5 @@ struct DestinationListingView: View {
 }
 
 #Preview {
-    DestinationListingView(sort: SortDescriptor(\Destination.name), searchString: "")
+    DestinationListingView(sort: SortDescriptor(\Destination.name), searchString: "", date: 0)
 }
